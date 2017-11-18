@@ -117,8 +117,8 @@ class ItemTestCase(unittest.TestCase):
     def test_edit_item_with_missing_item(self):
         """Should return 400 for missing item"""
 
-        # First add the bucket
-        bucket = json.dumps({
+        # First add the 
+         = json.dumps({
             'shoppinglist': 'Travel',
             'desc': 'Visit places'
         })
