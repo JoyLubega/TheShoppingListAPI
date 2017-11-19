@@ -108,11 +108,11 @@ class ItemModel(db.Model):
     name = db.Column(db.String(100))
     status = db.Column(db.String(5), default=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
-    _id = db.Column(db.Integer, db.ForeignKey('shoppinglists.id'))
+    shoppinglist_id = db.Column(db.Integer, db.ForeignKey('shoppinglists.id'))
     __table_args__ = (db.UniqueConstraint('shoppinglist_id', 'name', name='unq_i_name'),)
 
 
-    def __init__(self, name, shoppinglist_id):
+    def __init__(self, name,shoppinglist_id):
         self.name = name
         self.shoppinglist_id = shoppinglist_id
 

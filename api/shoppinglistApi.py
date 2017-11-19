@@ -3,9 +3,9 @@ import datetime
 import jwt
 from flask import jsonify, request, json, render_template
 from api import create_app
-from classes.authenticate import Authenticate
-from classes.slists import Shoppinglist
-from classes.item import Item
+from api.classes.authenticate import Authenticate
+from api.classes.slists import ShoppingList
+from api.classes.item import Item
 
 app = create_app('ProductionEnv')
 
@@ -83,7 +83,7 @@ def add_shoppinglist():
         if isinstance(user_id, int):
             shoppinglist_name = request.json['shoppinglist']
             desc = request.json['desc']
-            shoppinglist = Shoppinglist()
+            shoppinglist = ShoppingList()
             response = shoppinglist.create_shoppinglist(shoppinglist_name, desc, user_id)
             return response
         return invalid_token()
@@ -100,7 +100,7 @@ def get_shoppinglists():
         if isinstance(user_id, int):
             search = request.args.get("q", "")
             limit = request.args.get("limit", "")
-            shoppinglist = Shoppinglist()
+            shoppinglist = ShoppingList()
             if limit:
                 limit = int(limit)
                 response = shoppinglist.get_shoppinglists(user_id, search, limit)
@@ -121,7 +121,7 @@ def get_single_shoppinglist(shoppinglist_id):
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist = Shoppinglist()
+            shoppinglist = ShoppingList()
             response = shoppinglist.get_single_shoppinglist(user_id, shoppinglist_id)
             return response
         else:
@@ -131,18 +131,20 @@ def get_single_shoppinglist(shoppinglist_id):
         return invalid_keys()
 
 
-@app.route('/shoppinglist/<int:shoppinglist_id>', methods=['PUT'])
+@app.route('/shoppinglists/<int:shoppinglist_id>', methods=['PUT'])
 def update_shoppinglist(shoppinglist_id):
     """Method to handle updating a shoppinglist"""
-    request.get_json(force=True)
+    # print(request)
+    put_data = request.get_json(force=True)
+    # print(request.data)
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist_name = request.json['shoppinmglist']
-            desc = request.json['desc']
-            shoppinglist = Shoppinglist()
+            shoppinglist_name = put_data['shoppinmglist']
+            desc = put_data['desc']
+            shoppinglist = ShoppingList()
             response = shoppinglist.update_shoppinglist(user_id, shoppinglist_id,
-                                            sho[ping;list_name, desc)
+                                            shoppinglist_name, desc)
             return response
         else:
             return invalid_token()
@@ -157,7 +159,7 @@ def delete_shoppinglist(shoppinglist_id):
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist = Shoppinglist()
+            shoppinglist = ShoppingList()
             response = shoppinglist.delete_shoppinglist(user_id, shoppinglist_id)
             return response
         else:
@@ -211,7 +213,7 @@ def edit_item(shoppinglist_id, item_id):
             item_name = request.json['item']
             item_status = request.json['status']
             item = Item()
-            response = item.edit_item(user_id, shoppinglist_id, item_id,
+            response = item.edit_item(user_id,shoppinglist_id , item_id,
                                       item_name, item_status)
             return response
         else:

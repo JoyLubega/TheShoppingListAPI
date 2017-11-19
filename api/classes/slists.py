@@ -21,7 +21,7 @@ class ShoppingList(object):
             response.status_code = 200
             return response
 
-        shoppinglist = ShoppinglisttModel(name=name, desc=desc, user_id=user_id)
+        shoppinglist = ShoppinglistModel(name=name, desc=desc, user_id=user_id)
         try:
             shoppinglist.save()
             response = jsonify({
@@ -164,6 +164,19 @@ class ShoppingList(object):
         response.status_code = 200
         return response
 
+
+        # if not shoppinglist_name:
+        #     response.jsonify({'Error': 'Missing shoppinglist name'}), 400
+        #     return response
+
+        # shoppinglist = db.session.query.filter_by(id=shoppinglist_id,
+        #                                      user_id=user_id).first()
+        # if not shoppinglist:
+        #     response.jsonify({'error': 'the shoppinglist does not exist'}), 400
+
+
+        # return jsonify({'message':'Successful'}), 200
+
     @staticmethod
     def delete_shoppinglist(user_id, shoppinglist_id):
         """
@@ -171,7 +184,7 @@ class ShoppingList(object):
         :param user_id: 
         :param shoppinglist_id: 
         """
-        shoppinglist = ShoppingListModel.query.filter_by(id=shoppinglist_id,
+        shoppinglist = ShoppinglistModel.query.filter_by(id=shoppinglist_id,
                                              user_id=user_id).first()
         if not shoppinglist:
             response = jsonify({'error': 'shoppinglist not found'})

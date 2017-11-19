@@ -1,2 +1,6 @@
 /venv/
 .vscode
+migrations/
+__pycache__/	
+.DS_Store
+.cache

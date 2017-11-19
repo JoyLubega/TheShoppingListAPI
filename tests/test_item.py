@@ -118,7 +118,7 @@ class ItemTestCase(unittest.TestCase):
         """Should return 400 for missing item"""
 
         # First add the 
-         = json.dumps({
+        shoppinglist= json.dumps({
             'shoppinglist': 'Travel',
             'desc': 'Visit places'
         })

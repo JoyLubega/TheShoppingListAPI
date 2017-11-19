@@ -34,7 +34,7 @@ class Authenticate(object):
             response.status_code = 200
             return response
 
-        user = UserModal(email=email, password=password, name=name)
+        user = UserModel(email=email, password=password, name=name)
 
         if user.query.filter_by(email=email).first():
             response = jsonify({'Error': 'Email Already exists'})
@@ -69,7 +69,7 @@ class Authenticate(object):
             response.status_code = 200
             return response
 
-        user = UserModal(email=email, password=password)
+        user = UserModel(email=email, password=password)
         user_data = user.query.filter_by(email=email).first()
 
         # If Login successful

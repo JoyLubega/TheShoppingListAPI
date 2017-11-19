@@ -17,7 +17,7 @@ class AuthenticationTestCase(unittest.TestCase):
 
     def test_index_route(self):
         response = self.client.get('/')
-        self.assertIn('Welcome to the Shoppinglist API', response.data.decode())
+        self.assertIn('Welcome to the ShoppingList API', response.data.decode())
 
     def test_registration_with_missing_credentials(self):
         """Should throw error for missing credentials"""
