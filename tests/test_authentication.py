@@ -25,6 +25,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'name': '',
             'email': '',
             'password': ''
+
         })
         response = self.client.post('/auth/register', data=user)
         self.assertEqual(response.status_code, 200)
@@ -70,6 +71,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'name': 'joyce',
             'email': 'joyce@gmail.com',
             'password': 'lubegagrace'
+            
         })
         response = self.client.post('/auth/register', data=user)
         self.assertEqual(response.status_code, 201)

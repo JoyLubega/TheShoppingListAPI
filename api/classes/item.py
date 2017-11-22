@@ -46,7 +46,7 @@ class Item(object):
         """
         if not item_name:
             response = jsonify({'Error': 'Missing Item name'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         shoppinglist = ShoppinglistModel.query.filter_by(id=shoppinglist_id,
@@ -54,7 +54,7 @@ class Item(object):
         if not shoppinglist:
             response = jsonify({'Error': 'Shoppinglist with id '
                                          + str(user_id) + ' not found'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         item = ItemModel(name=item_name, shoppinglist_id=shoppinglist_id)

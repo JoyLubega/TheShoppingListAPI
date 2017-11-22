@@ -80,12 +80,14 @@ def add_shoppinglist():
     request.get_json(force=True)
     try:
         user_id = get_token()
+        #print(user_id.data)
         if isinstance(user_id, int):
-            shoppinglist_name = request.json['shoppinglist']
+            name = request.json['shoppinglist']
             desc = request.json['desc']
             shoppinglist = ShoppingList()
-            response = shoppinglist.create_shoppinglist(shoppinglist_name, desc, user_id)
+            response = shoppinglist.create_shoppinglist(name, desc, user_id)
             return response
+            
         return invalid_token()
 
     except KeyError:
@@ -134,13 +136,13 @@ def get_single_shoppinglist(shoppinglist_id):
 @app.route('/shoppinglists/<int:shoppinglist_id>', methods=['PUT'])
 def update_shoppinglist(shoppinglist_id):
     """Method to handle updating a shoppinglist"""
-    # print(request)
+    # (request)
     put_data = request.get_json(force=True)
-    # print(request.data)
+    # (request.data)
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist_name = put_data['shoppinmglist']
+            shoppinglist_name = put_data['shoppinglist']
             desc = put_data['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.update_shoppinglist(user_id, shoppinglist_id,
@@ -151,6 +153,31 @@ def update_shoppinglist(shoppinglist_id):
 
     except KeyError:
         return invalid_keys()
+
+
+
+
+# @app.route('/shoppinglists/<int:shoppinglist_id>', methods=['PUT'])
+# def update_shoppinglist(shoppinglist_id):
+#     """Method to handle updating a shoppinglist"""
+#     request.get_json(force=True)
+    
+#     try:
+#         print("joy")
+#         shoppinglist_id= request.json['shoppinglist_id']
+#         old_name = request.json['old_name']
+#         new_name = request.json['new_name']
+        
+#         if  not old_name:
+#             return 404
+#         elif old_name is new_name:
+#             return 400
+#         else:
+#             return response
+#         shoppinglist = ShoppingList()
+#         response = shoppinglist.update_shoppinglist(user_id,ushoppinglist_id, old_name, new_name)
+#     except KeyError:
+#         return invalid_keys()
 
 
 @app.route('/shoppinglists/<int:shoppinglist_id>', methods=['DELETE'])
@@ -241,13 +268,13 @@ def delete_item(item_id):
 
 def invalid_token():
     response = jsonify({'Error': 'Invalid Token'})
-    response.status_code = 400
+    response.status_code = 401
     return response
 
 
 def invalid_keys():
     response = jsonify({'Error': 'Invalid Keys detected'})
-    response.status_code = 400
+    response.status_code = 401
     return response
 
 
@@ -276,14 +303,14 @@ def encode_auth_token(user_id):
         return e
 
 
-def decode_auth_token(auth_token):
+def decode_auth_token(token):
     """
     Decodes the auth token
     :param auth_token:
     :return: integer|string
     """
     try:
-        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+        payload = jwt.decode(token, app.config.get('SECRET_KEY'), algorithms=['HS256'])
         return payload['sub']
     except jwt.ExpiredSignatureError:
         response = jsonify({
@@ -298,3 +325,5 @@ def decode_auth_token(auth_token):
         })
         response.status_code = 401
         return response
+        
+       
