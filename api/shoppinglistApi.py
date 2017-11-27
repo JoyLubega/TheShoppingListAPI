@@ -93,6 +93,19 @@ def add_shoppinglist():
     except KeyError:
         return invalid_keys()
 
+    # name = str(request.data.get('name', ''))
+    # if name:
+    #     shoppinglist = ShoppingList()
+    #     #shoppinglist.save()
+    #     response = jsonify({
+    #         #'id': shoppinglist.id,
+    #         'name': shoppinglist.name,
+    #         'date_created': shoppinglist.date_created,
+                    
+    #         })
+    #     response.status_code = 201
+    #     return response
+
 
 @app.route('/shoppinglists', methods=['GET'])
 def get_shoppinglists():
