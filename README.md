@@ -1,4 +1,7 @@
-https://travis-ci.org/JoyLubega/TheShoppingListAPI.svg?branch=master
+
+[![Build Status](https://travis-ci.org/JoyLubega/TheShoppingListAPI.svg?branch=master)]
+
+
 
 #Shopping List API
 Project description
