@@ -1,3 +1,5 @@
+https://travis-ci.org/JoyLubega/TheShoppingListAPI.svg?branch=master
+
 #Shopping List API
 Project description
 Brief highlights about the following concepts is necessary:
