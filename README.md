@@ -1,94 +1,96 @@
+# SHOPPINGLIST API
 
-[![Build Status](https://travis-ci.org/JoyLubega/TheShoppingListAPI.svg?branch=master)]
+The innovative Shoppinglist app is an application that allows users  to record things they want to Buy  This is the backend API for enabling users to perform crud operations on shoppinglist and items with user persistence.
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+- Just clone this repository by typing: `https://github.com/JoyLubega/TheShoppingListAPI.git`
+- Switch to project directory: `cd TheShoppingListAPI`
+- Install project requirements using python pip. But wait, you have to have some stuff before you get to this point. So these are:
+
+### Prerequisites
+
+- Python3.6 and above
+- Python virtual environment
+Just type:
+```
+python -V
+```
+in your terminal and if its not greater than or equal to 3.6, you're not in big trouble, there are tons of tutorials to get up up and running with these. Just grub one then come back when done.
+
+### Installing
+
+Now, you have python3 and a way of running a virtual environment. Lets set up the project environment.(remember we're still in the app directory)
+
+1. Create your virtual environment. Usually, without any wrappers:
+```
+python -m venv my_venv
+```
+2. Start your virtual environment:
+```
+source my_venv/bin/activate
+```
+3. Install the project requirements specified in the requirements.txt file. Usually,
+```
+pip install -r requirements.txt
+```
+4. *Do Migrations*. This application uses postgresql. If you don't have psql you may install it here.
+Create a `flask_api` database to be used by the application while running on your localhost.
+Then, you can do migrations as:
+```
+python manage.py db init
+python manage.py db migrate
+python manage.py db upgrade
+```
+
+This is enough to get you started.
+You can now run the application using:
+
+`python run.py`
+
+    
+## Running the tests
+
+Easy, just:
+`nosetests`
+
+## API Endpoints
+You can use postman or even curl to reach out to the following api endpoints:
+
+URL Endpoint	|               HTTP Request   | Resource Accessed | Access Type|
+----------------|-----------------|-------------|------------------
+/auth/register   |      POST	| Register a new user|publc
+/auth/login	  |     POST	| Login and retrieve token|public
+/auth/logout	  |     POST	| Logout and thus deactivate token|public
+/auth/reset-password	  |     PUT	| Reset your password when logged in|private
+/shoppinglists	              |      POST	|Create a new shoppinglist|private
+/shoppinglists	              |      GET	|     Retrieve all shoppinglist for user|private
+/shoppinglists/<shoppinglist_id>            |  	GET	    | Retrieve a shoppinglist by ID | private
+/shoppinglists/<shoppinglist_id>	          |      PUT	|     Update a shoppinglist |private
+/shoppinglists/<shoppinglist_id>	          |      DELETE	| Delete a shoppinglist |private
+/shoppinglists/<shoppinglist_id>/items/  |           GET    |Retrive items in a given shoppinglist|private
+/shoppinglists/<shoppinglist_id>/items/     |     POST	| Create items in a shoppinglist |private
+/shoppinglists/<shoppinglist_id>/items/<item_id>|	DELETE	| Delete an item in a shoppinglis |prvate
+/shoppinglists/<shoppinglist_id>/items/<item_id>|	PUT   	|update a shoppinglis item details |priate
 
 
 
-#Shoppinglist API
+## Built With
 
-A Shoppinglist is a list of items a person wishes to buy. This API is used to Perform CRUD operations on the Shoppinglist
+* [Python Flask](https://www.fullstackpython.com/flask.html) - The web framework used for this API
+
+## Contributing
+
+You can create your pull request. :D
 
 
-Project description
 
-Brief highlights about the following concepts is necessary:
 
-##API
-##REST
-##JSON
-##API
+## License
 
-An API, acronym for Application Programming Interface, provides a blueprint for how software programs interacts with each other.
+This project is currently under the [Creative Commons](https://creativecommons.org/) attribution.
 
-##REST
+## Acknowledgments
 
-REST is an acronym that stands for REpresentational State Transfer and has become the de-facto way of building API's and thus API's using this standard are known as RESTFul API's. The five main principles the implementation of REST and RESTFulness are:
-
-Everything is a resource.
-Every resource has a unique identifier.
-Use simple and uniform interfaces.
-Communication is done by representation.
-Aim to be Stateless.
-JSON
-
-Yet another acronym, JSON which stands for Javascript Object Notation, is a light-weight format that facilitates interchange of data between different systems or, case in point, software. It is intended to be universal and thus allows consumption of data by any program regardless of the programming language it is written in. Sample JSON data would be as follows:
-
-{
-    "name":"John Does",
-    "email":"johndoe@gmail.com",
-}
-
-Installation
-
-Clone the GitHub repo:
-
-$ git clone https://github.com/JoyLubega/TheShoppingListAPI.git
-cd into the folder and install a virtual environment
-
-$ virtualenv venv
-
-Activate the virtual environment
-
-$ venv/bin/activate
-
-Install all app requirements
-
-$ pip install -r requirements.txt Create the database and run migrations
-
-$ createdb flask_api
-
-$ createdb test_db
-
-$ python manage.py db init
-
-$ python manage.py db migrate
-
-$ python manage.py db upgrade
-
-All done! Now, start your server by running python manage.py runserver. You could use a GUI platform like postman to make requests to and fro the api.
-
-###Endpoints
-
-Here is a list of all the endpoints in Shoppinglist app.
-
-Endpoint | Functionality| Access
------------- | ------------- | ------------- 
-POST /auth/register | Registers a user | PUBLIC
-POST /auth/login |Logs a user in | PUBLIC
-POST /shoppinglists/ | Creates a new shoppinglist | PRIVATE
-GET /shoppinglists/ | Lists all created shoppinglist | PRIVATE
-GET /shoppinglists/id | Gets a single shoppinglist with the supplied id | PRIVATE
-PUT /shoppinglists/id | Updates shoppinglist with the suppled id | PRIVATE
-DELETE /shoppinglists/id | Deletes shoppinglist with the supplied id | PRIVATE
-POST /shoppinglists/id/items/ | Creates a new item in shoppinglist | PRIVATE
-PUT /shoppinglists/id/items/item_id | Updates a shoppinglist item | PRIVATE
-DELETE /shoppinglists/id/items/item_id | Deletes an item in a shoppinglist | PRIVATE
-
-Testing
-
-The application tests are based on python’s unit testing framework unittest. To run tests with nose, run:
-
-nosetests
-
-And you should see
-
-All 42 tests Passed
+* Andela  - Inspiring the idea.
