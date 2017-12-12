@@ -5,3 +5,4 @@ migrations/
 .DS_Store
 .cache
 *.pyc
+/htmlcov/
