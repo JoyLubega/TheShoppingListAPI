@@ -1,5 +1,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/JoyLubega/TheShoppingListAPI/badge.svg?branch=develop)](https://coveralls.io/github/JoyLubega/TheShoppingListAPI?branch=develop)
+
+[![Build Status](https://travis-ci.org/JoyLubega/TheShoppingListAPI.svg?branch=develop)](https://travis-ci.org/JoyLubega/TheShoppingListAPI)
 # SHOPPINGLIST API
 
 The innovative Shoppinglist app is an application that allows users  to record things they want to Buy  This is the backend API for enabling users to perform crud operations on shoppinglist and items with user persistence.
