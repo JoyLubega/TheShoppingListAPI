@@ -79,10 +79,14 @@ def add_shoppinglist():
     """Method to handle creating a shoppinglist"""
     request.get_json(force=True)
     try:
+        
         user_id = get_token()
-        #print(user_id.data)
+
+        
         if isinstance(user_id, int):
-            name = request.json['shoppinglist']
+
+
+            name = request.json['name']
             desc = request.json['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.create_shoppinglist(name, desc, user_id)
@@ -93,19 +97,7 @@ def add_shoppinglist():
     except KeyError:
         return invalid_keys()
 
-    # name = str(request.data.get('name', ''))
-    # if name:
-    #     shoppinglist = ShoppingList()
-    #     #shoppinglist.save()
-    #     response = jsonify({
-    #         #'id': shoppinglist.id,
-    #         'name': shoppinglist.name,
-    #         'date_created': shoppinglist.date_created,
-                    
-    #         })
-    #     response.status_code = 201
-    #     return response
-
+    
 
 @app.route('/shoppinglists', methods=['GET'])
 def get_shoppinglists():
@@ -155,7 +147,7 @@ def update_shoppinglist(shoppinglist_id):
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist_name = put_data['shoppinglist']
+            shoppinglist_name = put_data['name']
             desc = put_data['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.update_shoppinglist(user_id, shoppinglist_id,
@@ -296,6 +288,7 @@ def get_token():
 
 
 def encode_auth_token(user_id):
+
     """
     Generates the Auth Token
     :return: string
@@ -338,5 +331,4 @@ def decode_auth_token(token):
         })
         response.status_code = 401
         return response
-        
-       
+    
