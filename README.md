@@ -50,10 +50,9 @@ You can now run the application using:
 `python run.py`
 
     
-## Running the tests
+## Running the testsz
 
-Easy, just:
-`nosetests`
+Easy, just: `nosetests`
 
 ## API Endpoints
 You can use postman or even curl to reach out to the following api endpoints:
