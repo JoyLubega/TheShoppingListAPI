@@ -86,7 +86,7 @@ def add_shoppinglist():
         if isinstance(user_id, int):
 
 
-            name = request.json['name']
+            name = request.json['shoppinglist']
             desc = request.json['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.create_shoppinglist(name, desc, user_id)
@@ -147,7 +147,7 @@ def update_shoppinglist(shoppinglist_id):
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist_name = put_data['name']
+            shoppinglist_name = put_data['shoppinglist']
             desc = put_data['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.update_shoppinglist(user_id, shoppinglist_id,
