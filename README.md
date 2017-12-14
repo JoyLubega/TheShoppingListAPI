@@ -81,6 +81,33 @@ URL Endpoint	|               HTTP Request   | Resource Accessed | Access Type|
 /shoppinglists/<shoppinglist_id>/items/<item_id>|	PUT   	|update a shoppinglis item details |priate
 
 
+### Screenshots
+
+>Register
+![alt text](screenshots/register.png)
+
+>Login
+![alt text](screenshots/login.png)
+
+>Reset-Password
+![alt text](screenshots/reset-password.png)
+
+
+>add shoppinglist
+![alt text](screenshots/add_shoppinglist.png)
+
+delete
+![alt text](screenshots/delete.png)
+
+### Searching
+
+Functionality to search bucketlists using the parameter `q` in the GET request is enabled. 
+Example:
+
+`GET http://localhost:/shoppinglists?q=<whatever>`
+
+This request will return all shoppinglists with `whatever` in their name
+
 
 ## Built With
 
