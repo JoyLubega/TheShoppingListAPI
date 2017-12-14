@@ -1,6 +1,7 @@
 import datetime
 
 import jwt
+from flask import redirect
 from flask import jsonify, request, json, render_template
 from api import create_app
 from api.classes.authenticate import Authenticate
@@ -8,6 +9,7 @@ from api.classes.slists import ShoppingList
 from api.classes.item import Item
 
 app = create_app('ProductionEnv')
+PER_PAGE = 20
 
 
 @app.route('/', methods=['GET'])
@@ -20,6 +22,9 @@ def index():
 def register():
     """Method to handle user registration"""
     request.get_json(force=True)
+
+
+
     try:
         name = request.json['name']
         email = request.json['email']
@@ -242,11 +247,11 @@ def edit_item(shoppinglist_id, item_id):
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            item_name = request.json['item']
-            item_status = request.json['status']
+            new_item_name = request.json['item']
+            new_item_status = request.json['status']
             item = Item()
-            response = item.edit_item(user_id,shoppinglist_id , item_id,
-                                      item_name, item_status)
+            response = item.edit_item(user_id, shoppinglist_id, item_id,
+                                      new_item_name, new_item_status)
             return response
         else:
             return invalid_token()

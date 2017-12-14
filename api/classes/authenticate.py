@@ -1,6 +1,8 @@
+import re
 from flask import jsonify
 from validate_email import validate_email
 from models.models import UserModel
+
 
 
 class Authenticate(object):
@@ -34,6 +36,11 @@ class Authenticate(object):
             response.status_code = 200
             return response
 
+        if not name.isalpha():
+            response = jsonify({'Error': 'Names must be in alphabetical strings'})
+            # response.status_code = 200
+            return response
+
         user = UserModel(email=email, password=password, name=name)
 
         if user.query.filter_by(email=email).first():
@@ -44,7 +51,7 @@ class Authenticate(object):
         user.save()
         response = jsonify({
             'Status': user.email + ' Successfully registered',
-            'token': user.id
+             'token': user.id
         })
         response.status_code = 201
         return response

@@ -1,7 +1,6 @@
 from flask import jsonify
 from models.models import ShoppinglistModel, ItemModel
 
-
 class ShoppingList(object):
     """
     Handles all shoppinglist operations
@@ -47,8 +46,7 @@ class ShoppingList(object):
         :param search: 
         :return: 
         """
-
-        response = ShoppinglistModel.query.limit(limit).all()
+        response = ShoppinglistModel.query.filter_by(user_id=user_id).limit(limit).all()
         if not response:
             response = jsonify([])
             response.status_code = 200
@@ -83,11 +81,12 @@ class ShoppingList(object):
                 res = [shoppinglist for shoppinglist in
                        response if shoppinglist.user_id == user_id]
                 shoppinglist_data = []
+                
                 if not res:
                     response = jsonify({
                          'error': 'No shoppinglists have been created'
                     })
-                    response.status_code = 200
+                    response.status_code = 404
                     return response
                 else:
                     for data in res:
