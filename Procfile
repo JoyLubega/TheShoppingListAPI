@@ -1,1 +1,2 @@
-web: gunicorn run:app --preload 
+web: gunicorn run:app --preload
+release: python manage.py db upgrade 
