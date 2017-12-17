@@ -14,7 +14,6 @@ class UserModel(db.Model):
     name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(200))
-    #token  = db.Column(db.String, nullable=False, unique=True)
     shoppinglists = db.relationship(
         'ShoppinglistModel', backref='user', lazy='dynamic', cascade='delete')
 
@@ -57,54 +56,12 @@ class UserModel(db.Model):
     def __repr__(self) -> str:
         return "<User: {}>".format(self.name)
 
-    # def encode_auth_token(user_id):
-    #     """
-    #     Generates the Auth Token
-    #     :return: string
-    #     """
-    #     try:
-    #         payload = {
-    #             'exp': datetime.datetime.utcnow() +
-    #             datetime.timedelta(days=90),
-    #             'iat': datetime.datetime.utcnow(),
-    #             'sub': user_id
-    #         }
-    #         return jwt.encode(
-    #             payload,
-    #             app.config.get('SECRET_KEY'),
-    #             algorithm='HS256'
-    #         )
-    #     except Exception as e:
-    #         return e
-
-    # @staticmethod
-    # def decode_auth_token(auth_token):
-    #     """
-    #     Decodes the auth token
-    #     :param auth_token:
-    #     :return: integer|string
-    #     """
-    #     try:
-    #         payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
-    #         return payload['sub']
-    #     except jwt.ExpiredSignatureError:
-    #         response = jsonify({
-    #             'Expired': 'Signature expired. Please log in again.'
-    #         })
-    #         response.status_code = 401
-    #         return response
-
-    #     except jwt.InvalidTokenError:
-    #         response = jsonify({
-    #             'Invalid': 'Invalid token. Please log in again.'
-    #         })
-    #         response.status_code = 401
-    #         return response
+    
 
 
 class ShoppinglistModel(db.Model):
     """
-    Shoppinglist database Modae
+    Shoppinglist database Model
     """
     __tablename__ = 'shoppinglists'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -3,7 +3,8 @@ from flask_migrate import Migrate, MigrateCommand
 from api import db, create_app
 
 app = create_app(config_name='DevelopmentEnv')
-migrate = Migrate(app, db)
+MIGRATION_DIR = os.path.join('models', 'migrations')
+migrate = Migrate(app, db, directory=MIGRATION_DIR)
 manager = Manager(app)
 
 manager.add_command('db', MigrateCommand)

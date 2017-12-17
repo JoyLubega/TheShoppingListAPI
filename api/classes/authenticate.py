@@ -23,25 +23,26 @@ class Authenticate(object):
         """
         if not name or not email or not password:
             response = jsonify({'Error': 'Missing Values'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         if not validate_email(email):
             response = jsonify({'Error': 'Invalid Email'})
-            response.status_code = 200
+            response.status_code = 401
             return response
 
         if len(password) < 6:
             response = jsonify({'Error': 'Password is short'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         if not name.isalpha():
             response = jsonify({'Error': 'Names must be in alphabetical strings'})
-            # response.status_code = 200
+            response.status_code = 400
             return response
 
         user = UserModel(email=email, password=password, name=name)
+        
 
         if user.query.filter_by(email=email).first():
             response = jsonify({'Error': 'Email Already exists'})
