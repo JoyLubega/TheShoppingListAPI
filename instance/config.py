@@ -3,6 +3,8 @@ Configuration settings for different app environments
 """
 import os
 
+#pagnation
+PER_PAGE=3
 
 class MainConfiguration(object):
     DEBUG = False
@@ -25,7 +27,7 @@ class DevelopmentEnvironment(MainConfiguration):
 
 
 class ProductionEnvironment(MainConfiguration):
-    DEBUG = False
+    DEBUG = True
     TESTING = False
 
 

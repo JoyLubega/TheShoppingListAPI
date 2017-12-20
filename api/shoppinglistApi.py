@@ -9,7 +9,58 @@ from api.classes.slists import ShoppingList
 from api.classes.item import Item
 
 app = create_app('ProductionEnv')
-PER_PAGE = 20
+
+'''
+ 201  ok resulting to  creation of something
+ 200  ok
+ 400  bad request
+ 404  not found
+ 401  unauthorized
+ 409  conflict
+'''
+
+'''
+    (UTF) Unicode Transformation Format
+    its a character encoding
+    A character in UTF8 can be from 1 to 4 bytes long
+    UTF-8 is backwards compatible with ASCII
+    is the preferred encoding for e-mail and web pages
+'''
+
+
+# 404 error handler
+@app.errorhandler(404)
+def page_not_found(e):
+    response = jsonify({'error': 'The request can not be linked to, Please check your endpoint url'})
+    response.status_code = 404
+    return response
+
+
+# 405 error handler
+@app.errorhandler(405)
+def method_not_allowed(e):
+    response = jsonify({'error': 'Invalid request method. Please check the request method being used'})
+    response.status_code = 405
+    return response
+
+
+# 401 error handler
+@app.errorhandler(401)
+def internal_server_error(e):
+    response = jsonify({"error": "The token has a problem"})
+    response.status_code = 401
+    return response
+
+
+# 500 error handler
+@app.errorhandler(500)
+def internal_server_error(e):
+    response = jsonify({'error': 'something is wrong, please restart the server to use the shoppinglistAPI'})
+    response.status_code = 500
+    return response
+
+
+
 
 
 @app.route('/', methods=['GET'])
@@ -54,6 +105,14 @@ def login():
         return invalid_keys()
 
 
+def auth_success_reg(response):
+    if response.status_code == 201:
+        data = json.loads(response.data.decode())
+        #data['token'] = encode_auth_token(data['token']).decode()
+        response = jsonify(data)
+        response.status_code = 201
+    return response
+
 def auth_success(response):
     if response.status_code == 201:
         data = json.loads(response.data.decode())
@@ -92,9 +151,10 @@ def add_shoppinglist():
 
 
             name = request.json['shoppinglist']
+            shop_name = name.lower()
             desc = request.json['desc']
             shoppinglist = ShoppingList()
-            response = shoppinglist.create_shoppinglist(name, desc, user_id)
+            response = shoppinglist.create_shoppinglist(shop_name, desc, user_id)
             return response
             
         return invalid_token()
@@ -110,14 +170,18 @@ def get_shoppinglists():
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            search = request.args.get("q", "")
-            limit = request.args.get("limit", "")
+            #Pagination arguments: Setting page to 1, then min_per_page to 20 and max_per_page to 100
+            
+            limit = request.args.get('limit',5)
+            limit = limit if limit <= 20 else 20
+            search= request.args.get("q","")
+
             shoppinglist = ShoppingList()
             if limit:
                 limit = int(limit)
-                response = shoppinglist.get_shoppinglists(user_id, search, limit)
+                response = shoppinglist.get_shoppinglists(user_id,search,limit)
                 return response
-            response = shoppinglist.get_shoppinglists(user_id, search)
+            response = shoppinglist.get_shoppinglists(user_id,search,limit)
             return response
 
         else:
@@ -153,10 +217,11 @@ def update_shoppinglist(shoppinglist_id):
         user_id = get_token()
         if isinstance(user_id, int):
             shoppinglist_name = put_data['shoppinglist']
+            list_name = shoppinglist_name.lower()
             desc = put_data['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.update_shoppinglist(user_id, shoppinglist_id,
-                                            shoppinglist_name,desc)
+                                            list_name,desc)
             return response
         else:
             return invalid_token()
@@ -205,8 +270,9 @@ def add_item(shoppinglist_id):
         user_id = get_token()
         if isinstance(user_id, int):
             item_name = request.json['item']
+            itemname = item_name.lower()
             item = Item()
-            response = item.add_item(user_id, shoppinglist_id, item_name)
+            response = item.add_item(user_id, shoppinglist_id, itemname)
             return response
         else:
             return invalid_token()
@@ -223,6 +289,7 @@ def edit_item(shoppinglist_id, item_id):
         user_id = get_token()
         if isinstance(user_id, int):
             new_item_name = request.json['item']
+            newitemname = new_item_name.lower()
             new_item_status = request.json['status']
             item = Item()
             response = item.edit_item(user_id, shoppinglist_id, item_id,
@@ -252,13 +319,13 @@ def delete_item(item_id):
 
 
 def invalid_token():
-    response = jsonify({'Error': 'Invalid Token'})
+    response = jsonify({'Error': 'There is a problem with token'})
     response.status_code = 401
     return response
 
 
 def invalid_keys():
-    response = jsonify({'Error': 'Invalid Keys detected'})
+    response = jsonify({'Error': 'Check the keys and try again'})
     response.status_code = 401
     return response
 

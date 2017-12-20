@@ -1,4 +1,5 @@
-from flask import jsonify
+from flask import jsonify,url_for
+from flask import request
 from models.models import ShoppinglistModel, ItemModel
 
 class ShoppingList(object):
@@ -17,7 +18,12 @@ class ShoppingList(object):
         """
         if not name:
             response = jsonify({'Error': 'Missing name'})
-            response.status_code = 404
+            response.status_code = 400
+            return response
+
+        if not name.isalpha():
+            response = jsonify({'Error': 'Names must be in alphabetical strings'})
+            response.status_code = 400
             return response
 
         shoppinglist = ShoppinglistModel(name=name, desc=desc, user_id=user_id)
@@ -39,105 +45,119 @@ class ShoppingList(object):
             return response
 
     @staticmethod
-    def get_shoppinglists(user_id, search, limit=None):
+    def get_shoppinglists( user_id,search, limit):
         """
         Gets all shoppinglists
         :param user_id: 
         :param search: 
         :return: 
         """
+        page = request.args.get('page', 1, type=int)
+        #shoppinglist = ShoppinglistModel(name=name,desc=desc, user_id=user_id)
         response = ShoppinglistModel.query.filter_by(user_id=user_id).limit(limit).all()
         if not response:
             response = jsonify([])
             response.status_code = 200
             return response
         else:
+            results = []
+            
             if search:
-                res = [shoppinglist for shoppinglist in response if shoppinglist.name
-                       in search and shoppinglist.user_id == user_id]
-                if not res:
-                    response = jsonify({
-                        'error': 'The shoppinglist you searched does not exist'
-                    })
-                    return response
-                else:
-                    shoppinglist_data = []
-                    for data in res:
-                        final = {
-                            'id': data.id,
-                            'name': data.name,
-                            'desc': data.desc,
-                            'date_added': data.date_added,
-                            'user_id': data.user_id
-                            
-                        }
-                        shoppinglist_data.clear()
-                        shoppinglist_data.append(final)
-                    response = jsonify(shoppinglist_data)
-                    response.status_code = 200
-                    return response
-
+                shopping_lists = ShoppinglistModel.query.filter_by(
+                    user_id=user_id).filter(ShoppinglistModel.name.like('%{0}%'.format(search)))
             else:
-                res = [shoppinglist for shoppinglist in
-                       response if shoppinglist.user_id == user_id]
-                shoppinglist_data = []
-                
-                if not res:
-                    response = jsonify({
-                         'error': 'No shoppinglists have been created'
-                    })
-                    response.status_code = 404
-                    return response
+                shopping_lists = ShoppinglistModel.query.filter_by(user_id=user_id)
+            
+            if shopping_lists:
+                pagination = shopping_lists.paginate(page, per_page=limit, error_out=False)
+                shop_lists = pagination.items
+                if pagination.has_prev:
+                    prev = url_for('get_shoppinglists', page=page-1, limit= limit, _external=True)
                 else:
-                    for data in res:
-                        final = {
-                            'id': data.id,
-                            'name': data.name,
-                            'desc': data.desc,
-                            'date_added': data.date_added,
-                            'user_id': data.user_id,
-                            
-                        }
-                        shoppinglist_data.append(final)
-                    response = jsonify(shoppinglist_data)
+                    prev = None
+                if pagination.has_next:
+                    next = url_for('get_shoppinglists', page=page+1, limit=limit, _external=True)
+                else:
+                    next = None
+                if shop_lists:
+                    for shoppinglist in shop_lists:
+                        obj = {
+                            'id': shoppinglist.id,
+                            'name': shoppinglist.name,
+                            'desc':shoppinglist.desc
+                            }
+                        results.append(obj)
+                    response = jsonify({
+                        'shoppinglists': results,
+                        'prev': prev,
+                        'next': next,
+                        'count': pagination.total
+                        })
                     response.status_code = 200
                     return response
+                else:
+                    return {'message':'No shopping lists to display'}, 404      
 
 
-# the query parameters
-        # search_query = request.args.get('q', None, type=str)
-        # page = request.args.get('page', 1, type=int)
-        # per_page = request.args.get('limit', 10, type=int)
-        # if per_page and per_page > 20:  # pragma: no cover
-        #     per_page = 20
-        # if not per_page or per_page < 1:  # pragma: no cover
-        #     per_page = 20
-        # if not page or page < 1:  # pragma: no cover
-        #     page = 1
+        # response = ShoppinglistModel.query.filter_by(user_id=user_id).limit(limit).all()
+        # if not response:
+        #     response = jsonify([])
+        #     response.status_code = 200
+        #     return response
+        # else:
+        #     if search:
+        #         res = [shoppinglist for shoppinglist in response if shoppinglist.name
+        #                in search and shoppinglist.user_id == user_id]
+        #         if not res:
+        #             response = jsonify({
+        #                 'error': 'The shoppinglist you searched does not exist'
+        #             })
+        #             return response
+        #         else:
+        #             shoppinglist_data = []
+        #             for data in res:
+        #                 final = {
+        #                     'id': data.id,
+        #                     'name': data.name,
+        #                     'desc': data.desc,
+        #                     'date_added': data.date_added,
+        #                     'user_id': data.user_id
+                            
+        #                 }
+        #                 shoppinglist_data.clear()
+        #                 shoppinglist_data.append(final)
+        #             response = jsonify(shoppinglist_data)
+        #             response.status_code = 200
+        #             return response
 
-        # query_object = ShoppingList.query.filter(
-        #     ShoppingList.user_id == user_id)
-        # if search_query is not None:
-        #     query_object = query_object.filter(ShoppingList.name.like(
-        #         '%' + search_query.strip().lower() + '%'))
+        #     else:
+        #         res = [shoppinglist for shoppinglist in
+        #                response if shoppinglist.user_id == user_id]
+        #         shoppinglist_data = []
+                
+        #         if not res:
+        #             response = jsonify({
+        #                  'error': 'No shoppinglists have been created'
+        #             })
+        #             response.status_code = 404
+        #             return response
+        #         else:
+        #             for data in res:
+        #                 final = {
+        #                     'id': data.id,
+        #                     'name': data.name,
+        #                     'desc': data.desc,
+        #                     'date_added': data.date_added,
+        #                     'user_id': data.user_id,
+                            
+        #                 }
+        #                 shoppinglist_data.append(final)
+        #             response = jsonify(shoppinglist_data)
+        #             response.status_code = 200
+        #             return response
 
-        # # pg_object refers to the pagination object obtained
-        # pg_object = query_object.paginate(
-        #     page=page, per_page=per_page, error_out=False)
 
-        # next_page = None
-        # if pg_object.has_next:
-        #     next_page = "/api/v1/shoppinglists?page={0}{1}{2}".format(
-        #         pg_object.next_num,
-        #         '' if per_page == 20 else f'&limit={per_page}',
-        #         '' if search_query is None else f'&q={search_query}')
 
-        # previous_page = None
-        # if pg_object.has_prev:
-        #     previous_page = "/ shoppinglists?page={0}{1}{2}".format(
-        #         pg_object.prev_num,
-        #         '' if per_page == 20 else f'&limit={per_page}',
-        #         '' if search_query is None else f'&q={search_query}')
 
 
 
@@ -155,7 +175,7 @@ class ShoppingList(object):
                 'error': 'shoppinglist with id ' +
                          str(shoppinglist_id) + ' not found'
             })
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         shoppinglist_data = {
@@ -217,7 +237,7 @@ class ShoppingList(object):
                                              user_id=user_id).first()
         if not shoppinglist:
             response = jsonify({'error': 'shoppinglist not found'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         items = ItemModel.query.filter_by(shoppinglist_id=shoppinglist_id)

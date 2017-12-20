@@ -35,7 +35,7 @@ class ShoppingListTestCase(unittest.TestCase):
         })
         response = self.client.post('/shoppinglists', data=shoppinglist,
                                     headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Missing', response.data.decode())
 
     def test_add_shoppinglist_successfully(self):
@@ -46,8 +46,9 @@ class ShoppingListTestCase(unittest.TestCase):
          })
         response = self.client.post('/shoppinglists', data=shoppinglist,
                                     headers={"Authorization": self.token})
+        #
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Travel', response.data.decode())
+        self.assertIn('travel', str(response.data.decode()))
 
         
 
@@ -82,7 +83,7 @@ class ShoppingListTestCase(unittest.TestCase):
         response = self.client.get('/shoppinglists',
                                    headers={"Authorization": self.token})
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Travel',
+        self.assertIn('travel',
                       response.data.decode())
 
     def test_get_shoppinglist_search(self):
@@ -90,11 +91,14 @@ class ShoppingListTestCase(unittest.TestCase):
 
         # First add shoppinglist
         self.test_add_shoppinglist_successfully()
-        response = self.client.get('/shoppinglists?q=Travel',
+        response = self.client.get('/shoppinglists?q=travel',
                                    headers={"Authorization": self.token})
+
+        print(response.data.decode())
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Travel',
+        self.assertIn('travel',
                       response.data.decode())
+
 
     def test_get_single_shoppinglist(self):
         """Should return 200 and shoppinglists"""
@@ -108,11 +112,11 @@ class ShoppingListTestCase(unittest.TestCase):
                       response.data.decode())
 
     def test_get_single_shoppinglist_with_no_shoppinglist(self):
-        """Should return 400 if no shoppinglist"""
+        """Should return 404 if no shoppinglist"""
 
         response = self.client.get('/shoppinglists/1',
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('not found',
                       response.data.decode())
 
@@ -123,7 +127,7 @@ class ShoppingListTestCase(unittest.TestCase):
         self.test_add_shoppinglist_successfully()
         response = self.client.get('/shoppinglists/2',
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('shoppinglist with id 2 not found',
                       response.data.decode())
 
@@ -134,7 +138,7 @@ class ShoppingListTestCase(unittest.TestCase):
         response = self.client.get('/shoppinglists/1',
                                    headers={"Authorization": self.token})
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Travel',
+        self.assertIn('travel',
                       response.data.decode())
     def test_update_shoppinglist_which_doesnt_exist(self):
         """
@@ -145,7 +149,7 @@ class ShoppingListTestCase(unittest.TestCase):
         # First add shoppinglist
         self.test_add_shoppinglist_successfully()
         shoppinglist = json.dumps({
-            'shoppinglist': 'Travel',
+            'shoppinglist': 'travel',
             'desc': 'Visit places'
         })
         response = self.client.put('/shoppinglists/2', data=shoppinglist,
@@ -165,7 +169,7 @@ class ShoppingListTestCase(unittest.TestCase):
         response = self.client.put('/shoppinglist/1', data=shoppinglist,
                                    headers={"Authorization": self.token})
         self.assertEqual(response.status_code, 404)
-        self.assertIn('Not Found', response.data.decode())
+        self.assertIn('The request can not be linked to, Please check your endpoint url', response.data.decode())
 
     def test_update_shoppinglist_with_same_name(self):
         """Should return 200 for shoppinglist updates with same name"""
@@ -173,7 +177,7 @@ class ShoppingListTestCase(unittest.TestCase):
         # First add shoppinglist
         self.test_add_shoppinglist_successfully()
         shoppinglist = json.dumps({
-            'shoppinglist': 'Travel',
+            'shoppinglist': 'travel',
             'desc': 'Visit places'
         })
         response = self.client.put('/shoppinglists/1', data=shoppinglist,
@@ -202,11 +206,11 @@ class ShoppingListTestCase(unittest.TestCase):
 
         response = self.client.delete(
             '/shoppinglists/1', headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('shoppinglist not found', response.data.decode())
                        
     def test_delete_shoppinglist_successfully(self):
-        """Should return 201 for shoppinglist added"""
+        """Should return 200 for shoppinglist deleted"""
 
         # First add a shoppinglist
         self.test_add_shoppinglist_successfully()

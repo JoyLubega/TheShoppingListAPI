@@ -26,11 +26,16 @@ class Authenticate(object):
             response.status_code = 404
             return response
 
-        if not validate_email(email):
-            response = jsonify({'Error': 'Invalid Email'})
+
+        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
+            response = jsonify(
+            {'message':
+            'Invalid email! A valid email should in this format me.name@gmail.com or joyce.namuli@andela.com' }
+            )
             response.status_code = 401
             return response
 
+        
         if len(password) < 6:
             response = jsonify({'Error': 'Password is short'})
             response.status_code = 400
@@ -52,7 +57,7 @@ class Authenticate(object):
         user.save()
         response = jsonify({
             'Status': user.email + ' Successfully registered',
-             'token': user.id
+            'token': user.id
         })
         response.status_code = 201
         return response
@@ -72,9 +77,12 @@ class Authenticate(object):
             response.status_code = 400
             return response
 
-        if not validate_email(email):
-            response = jsonify({'Error': 'Enter valid email'})
-            response.status_code = 400
+        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
+            response = jsonify(
+            {'message':
+            'Invalid email! A valid email should in this format me.name@gmail.com or joyce.namuli@andela.com' }
+            )
+            response.status_code = 401
             return response
 
         user = UserModel(email=email, password=password)

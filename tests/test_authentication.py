@@ -40,7 +40,7 @@ class AuthenticationTestCase(unittest.TestCase):
         })
         response = self.client.post('/auth/register', data=user)
         self.assertEqual(response.status_code, 401)
-        self.assertIn('Invalid Email', response.data.decode())
+        self.assertIn('Invalid email! A valid email should in this format me.name@gmail.com or joyce.namuli@andela.com', response.data.decode())
 
     def test_registration_with_short_password(self):
         """Should return invalid email"""
@@ -94,8 +94,8 @@ class AuthenticationTestCase(unittest.TestCase):
             'password': 'lubegagrace'
         })
         response = self.client.post('/auth/login', data=user)
-        self.assertEqual(response.status_code, 400)
-        self.assertIn('Enter valid email', response.data.decode())
+        self.assertEqual(response.status_code, 401)
+        self.assertIn('Invalid email! A valid email should in this format me.name@gmail.com or joyce.namuli@andela.com', response.data.decode())
 
     def test_incorrect_login_credentials(self):
         """Should check for valid email"""

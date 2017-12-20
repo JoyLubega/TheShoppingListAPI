@@ -17,7 +17,7 @@ class Item(object):
         response = ItemModel.query.all()
         if not response:
             response = jsonify({})
-            response.status_code = 200
+            response.status_code = 404
             return response
         else:
             res = [item for item in

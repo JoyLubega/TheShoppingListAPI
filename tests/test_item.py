@@ -47,7 +47,7 @@ class ItemTestCase(unittest.TestCase):
 
         # First add the shoppinglist
         shoppinglist = json.dumps({
-            'shoppinglist': 'Travel to china',
+            'shoppinglist': 'travel',
             'desc': 'Vaction'
         })
         self.client.post('/shoppinglists', data=shoppinglist,
@@ -59,16 +59,17 @@ class ItemTestCase(unittest.TestCase):
         })
         response = self.client.post('/shoppinglists/1/items', data=item,
                                     headers={"Authorization": self.token})
-        #print(response.data.decode())
+        
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Go to Kenya', response.data.decode())
+        self.assertIn('go to kenya', response.data.decode())
+        print(response.data.decode())
 
     def test_get_items_when_DB_empty(self):
         """Should return no items in the DB msg"""
 
         response = self.client.get('/items/1',
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         
 
     def test_get_items(self):
@@ -80,7 +81,7 @@ class ItemTestCase(unittest.TestCase):
                                    headers={"Authorization": self.token})
         self.assertEqual(response.status_code, 200)
         (response.data.decode())
-        self.assertIn('Go to Kenya',
+        self.assertIn('go to kenya',
                       response.data.decode())
 
     def test_add_duplicate_item(self):
