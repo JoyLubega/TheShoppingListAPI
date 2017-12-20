@@ -35,7 +35,7 @@ class ShoppingListTestCase(unittest.TestCase):
         })
         response = self.client.post('/shoppinglists', data=shoppinglist,
                                     headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('Missing', response.data.decode())
 
     def test_add_shoppinglist_successfully(self):
@@ -49,10 +49,7 @@ class ShoppingListTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn('Travel', response.data.decode())
 
-        # res = self.client.post('/shoppinglists', data=self.shoppinglist)
-        # self.assertEqual(res.status_code, 201)
-        # self.assertIn('Go to Borabora', str(res.data))
-
+        
 
 
     def test_add_shoppinglist_with_existing_shoppinglist_name(self):
@@ -153,7 +150,7 @@ class ShoppingListTestCase(unittest.TestCase):
         })
         response = self.client.put('/shoppinglists/2', data=shoppinglist,
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('does not exist', response.data.decode())
 
     def test_update_shoppinglist_without_name(self):
@@ -167,8 +164,8 @@ class ShoppingListTestCase(unittest.TestCase):
         })
         response = self.client.put('/shoppinglist/1', data=shoppinglist,
                                    headers={"Authorization": self.token})
-        #self.assertEqual(response.status_code, 404)
-        #self.assertIn('Shoppinglist missing', response.data.decode())
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('Not Found', response.data.decode())
 
     def test_update_shoppinglist_with_same_name(self):
         """Should return 200 for shoppinglist updates with same name"""
@@ -181,9 +178,9 @@ class ShoppingListTestCase(unittest.TestCase):
         })
         response = self.client.put('/shoppinglists/1', data=shoppinglist,
                                    headers={"Authorization": self.token})
-        #print(response.data.decode())
-        #self.assertEqual(response.status_code, 409)
-        #self.assertIn(' name Already exists', response.data.decode())
+        # print(response.data.decode())
+        # self.assertEqual(response.status_code, 409)
+        # self.assertIn(' name Already exists', response.data.decode())
 
     def test_update_shoppinglist_successfully(self):
         """Should return 200 for shoppinglists update succesfully"""

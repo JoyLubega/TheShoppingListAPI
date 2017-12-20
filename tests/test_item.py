@@ -103,7 +103,7 @@ class ItemTestCase(unittest.TestCase):
         })
         response = self.client.put('/shoppinglists/1/items/1', data=item,
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('Missing parameters', response.data.decode())
 
     def test_edit_item_with_missing_shoppinglist(self):
@@ -135,7 +135,7 @@ class ItemTestCase(unittest.TestCase):
         })
         response = self.client.put('/shoppinglists/1/items/1', data=item,
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('item with id 1 does not exist',
                       response.data.decode())
 

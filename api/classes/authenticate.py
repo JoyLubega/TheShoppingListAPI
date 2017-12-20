@@ -42,7 +42,7 @@ class Authenticate(object):
             return response
 
         user = UserModel(email=email, password=password, name=name)
-        
+
 
         if user.query.filter_by(email=email).first():
             response = jsonify({'Error': 'Email Already exists'})
@@ -69,12 +69,12 @@ class Authenticate(object):
         """
         if not email or not password:
             response = jsonify({'Error': 'Missing login credentials'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         if not validate_email(email):
             response = jsonify({'Error': 'Enter valid email'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         user = UserModel(email=email, password=password)
@@ -108,7 +108,7 @@ class Authenticate(object):
         """
         if not email or not old_password or not new_password:
             response = jsonify({'Error': 'Missing email or password'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         user = UserModel.query.filter_by(email=email).first()
@@ -118,7 +118,7 @@ class Authenticate(object):
 
         if not user or not user.check_password(user.password, old_password):
             response = jsonify({'Error': 'Email and password does not exist'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         user.password = new_password

@@ -1,11 +1,10 @@
-import os
 from flask_script import Manager  # class for handling a set of commands
 from flask_migrate import Migrate, MigrateCommand
 from api import db, create_app
 
 app = create_app(config_name='DevelopmentEnv')
-MIGRATION_DIR = os.path.join('ShoppinglistAPI','migrations')
-migrate = Migrate(app, db, directory=MIGRATION_DIR)
+
+migrate = Migrate(app, db)
 manager = Manager(app)
 
 manager.add_command('db', MigrateCommand)

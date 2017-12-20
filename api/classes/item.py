@@ -86,7 +86,7 @@ class Item(object):
         """
         if not new_item_name and not new_item_status:
             response = jsonify({'Error': 'Missing parameters'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         allowed_status = ["true", "false"]
@@ -108,7 +108,7 @@ class Item(object):
             response = jsonify({
                 'Error': 'item with id ' + str(item_id) + ' does not exist'
             })
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         item.name = new_item_name

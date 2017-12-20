@@ -156,38 +156,13 @@ def update_shoppinglist(shoppinglist_id):
             desc = put_data['desc']
             shoppinglist = ShoppingList()
             response = shoppinglist.update_shoppinglist(user_id, shoppinglist_id,
-                                            shoppinglist_name, desc)
+                                            shoppinglist_name,desc)
             return response
         else:
             return invalid_token()
 
     except KeyError:
         return invalid_keys()
-
-
-
-
-# @app.route('/shoppinglists/<int:shoppinglist_id>', methods=['PUT'])
-# def update_shoppinglist(shoppinglist_id):
-#     """Method to handle updating a shoppinglist"""
-#     request.get_json(force=True)
-    
-#     try:
-#         print("joy")
-#         shoppinglist_id= request.json['shoppinglist_id']
-#         old_name = request.json['old_name']
-#         new_name = request.json['new_name']
-        
-#         if  not old_name:
-#             return 404
-#         elif old_name is new_name:
-#             return 400
-#         else:
-#             return response
-#         shoppinglist = ShoppingList()
-#         response = shoppinglist.update_shoppinglist(user_id,ushoppinglist_id, old_name, new_name)
-#     except KeyError:
-#         return invalid_keys()
 
 
 @app.route('/shoppinglists/<int:shoppinglist_id>', methods=['DELETE'])
