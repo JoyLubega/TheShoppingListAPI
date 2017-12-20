@@ -17,7 +17,7 @@ class ShoppingList(object):
         """
         if not name:
             response = jsonify({'Error': 'Missing name'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
         shoppinglist = ShoppinglistModel(name=name, desc=desc, user_id=user_id)
@@ -103,6 +103,44 @@ class ShoppingList(object):
                     response.status_code = 200
                     return response
 
+
+# the query parameters
+        # search_query = request.args.get('q', None, type=str)
+        # page = request.args.get('page', 1, type=int)
+        # per_page = request.args.get('limit', 10, type=int)
+        # if per_page and per_page > 20:  # pragma: no cover
+        #     per_page = 20
+        # if not per_page or per_page < 1:  # pragma: no cover
+        #     per_page = 20
+        # if not page or page < 1:  # pragma: no cover
+        #     page = 1
+
+        # query_object = ShoppingList.query.filter(
+        #     ShoppingList.user_id == user_id)
+        # if search_query is not None:
+        #     query_object = query_object.filter(ShoppingList.name.like(
+        #         '%' + search_query.strip().lower() + '%'))
+
+        # # pg_object refers to the pagination object obtained
+        # pg_object = query_object.paginate(
+        #     page=page, per_page=per_page, error_out=False)
+
+        # next_page = None
+        # if pg_object.has_next:
+        #     next_page = "/api/v1/shoppinglists?page={0}{1}{2}".format(
+        #         pg_object.next_num,
+        #         '' if per_page == 20 else f'&limit={per_page}',
+        #         '' if search_query is None else f'&q={search_query}')
+
+        # previous_page = None
+        # if pg_object.has_prev:
+        #     previous_page = "/ shoppinglists?page={0}{1}{2}".format(
+        #         pg_object.prev_num,
+        #         '' if per_page == 20 else f'&limit={per_page}',
+        #         '' if search_query is None else f'&q={search_query}')
+
+
+
     @staticmethod
     def get_single_shoppinglist(user_id, shoppinglist_id):
         """
@@ -144,19 +182,19 @@ class ShoppingList(object):
         """
         if not shoppinglist_name:
             response = jsonify({'Error': 'Missing shoppinglist name'})
-            response.status_code = 401
+            response.status_code = 400
             return response
 
         shoppinglist = ShoppinglistModel.query.filter_by(id=shoppinglist_id,
                                              user_id=user_id).first()
         if not shoppinglist:
             shoppinglist = jsonify({'error': 'the shoppinglist does not exist'})
-            shoppinglist.status_code = 404
+            shoppinglist.status_code = 400
             return shoppinglist
-        # if shoppinglist.name == shoppinglist_name:
-        #     shoppinglist = jsonify({'error': 'the shoppinglist name is the same'})
-        #     shoppinglist.status_code = 409
-            #return shoppinglist
+        if shoppinglist.name is shoppinglist_name:
+            shoppinglist = jsonify({'error': 'the shoppinglist name is the same'})
+            shoppinglist.status_code = 409
+            return shoppinglist
         shoppinglist.name = shoppinglist_name
         shoppinglist.desc = desc
         shoppinglist.update()

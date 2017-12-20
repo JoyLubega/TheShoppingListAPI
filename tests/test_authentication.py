@@ -28,7 +28,7 @@ class AuthenticationTestCase(unittest.TestCase):
 
         })
         response = self.client.post('/auth/register', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('Missing', response.data.decode())
 
     def test_registration_with_invalid_email(self):
@@ -39,7 +39,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'password': 'lubega'
         })
         response = self.client.post('/auth/register', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 401)
         self.assertIn('Invalid Email', response.data.decode())
 
     def test_registration_with_short_password(self):
@@ -50,7 +50,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'password': 'lub'
         })
         response = self.client.post('/auth/register', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Password is short', response.data.decode())
 
     def test_for_existing_email(self):
@@ -84,7 +84,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'password': ''
         })
         response = self.client.post('/auth/login', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Missing login credentials', response.data.decode())
 
     def test_login_with_invalid_email(self):
@@ -94,7 +94,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'password': 'lubegagrace'
         })
         response = self.client.post('/auth/login', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid email', response.data.decode())
 
     def test_incorrect_login_credentials(self):
@@ -134,7 +134,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'new_password': ''
         })
         response = self.client.post('/auth/reset-password', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Missing email or password', response.data.decode())
 
     def test_reset_password_for_non_exisiting_email(self):
@@ -148,7 +148,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'new_password': 'qwerty'
         })
         response = self.client.post('/auth/reset-password', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Email and password does not exist', response.data.decode())
 
     def test_reset_password_with_wrong_password(self):
@@ -162,7 +162,7 @@ class AuthenticationTestCase(unittest.TestCase):
             'new_password': 'secret3'
         })
         response = self.client.post('/auth/reset-password', data=user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Email and password does not exist', response.data.decode())
 
     def test_reset_password_successfully(self):
