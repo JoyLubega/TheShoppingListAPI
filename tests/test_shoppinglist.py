@@ -9,7 +9,7 @@ class ShoppingListTestCase(unittest.TestCase):
     def setUp(self):
         app.config.from_object(application_config['TestingEnv'])
         self.client = app.test_client()
-        self.shoppinglist = {'name': 'Go to Borabora for vacation'}
+        self.shoppinglist = {'shoppinglist': 'Go to Goborola'}
         
 
         # Binds the app to current context
@@ -30,25 +30,27 @@ class ShoppingListTestCase(unittest.TestCase):
     def test_add_shoppinglist_without_name(self):
         """Should return 400 for missing shoppinglist name"""
         shoppinglist= json.dumps({
-            'shoppinglist': '',
+            'name': '',
             'desc': 'travel'
         })
         response = self.client.post('/shoppinglists', data=shoppinglist,
                                     headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 400)
-        self.assertIn('Missing', response.data.decode())
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('Missing name', response.data.decode())
 
     def test_add_shoppinglist_successfully(self):
         """Should return 201 for shoppinglist added"""
         shoppinglist = json.dumps({
-            'shoppinglist': 'Travel',
+            'name': 'Travel',
              'desc': 'Visit places'
          })
         response = self.client.post('/shoppinglists', data=shoppinglist,
                                     headers={"Authorization": self.token})
-        #
+
+       
         self.assertEqual(response.status_code, 201)
-        self.assertIn('travel', str(response.data.decode()))
+        print(str(response.data.decode()))
+        self.assertIn('travel', response.data.decode())
 
         
 
@@ -59,7 +61,7 @@ class ShoppingListTestCase(unittest.TestCase):
         # First Add shoppinglist
         self.test_add_shoppinglist_successfully()
         shoppinglist = json.dumps({
-            'shoppinglist': 'Travel',
+            'name': 'Travel',
             'desc': 'travel'
         })
         response = self.client.post('/shoppinglists', data=shoppinglist,
@@ -72,7 +74,7 @@ class ShoppingListTestCase(unittest.TestCase):
         """Should return no shoppinglist lists msg"""
         response = self.client.get('/shoppinglists',
                                    headers={"Authorization": self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         
 
     def test_get_shoppinglist(self):
@@ -149,7 +151,7 @@ class ShoppingListTestCase(unittest.TestCase):
         # First add shoppinglist
         self.test_add_shoppinglist_successfully()
         shoppinglist = json.dumps({
-            'shoppinglist': 'travel',
+            'name': 'travel',
             'desc': 'Visit places'
         })
         response = self.client.put('/shoppinglists/2', data=shoppinglist,
@@ -161,7 +163,7 @@ class ShoppingListTestCase(unittest.TestCase):
         """Should return 400 for missing shoppinglist name"""
         self.test_add_shoppinglist_successfully
         shoppinglist= json.dumps({
-            'shoppinglist': '',
+            'name': '',
             'desc': 'tattoo'
             
             
@@ -172,31 +174,44 @@ class ShoppingListTestCase(unittest.TestCase):
         self.assertIn('The request can not be linked to, Please check your endpoint url', response.data.decode())
 
     def test_update_shoppinglist_with_same_name(self):
-        """Should return 200 for shoppinglist updates with same name"""
+        """Should return 409 for shoppinglist updates with same name"""
 
-        # First add shoppinglist
-        self.test_add_shoppinglist_successfully()
         shoppinglist = json.dumps({
-            'shoppinglist': 'travel',
+            'name': 'Travel',
+             'desc': 'Visit places'
+         })
+        response = self.client.post('/shoppinglists', data=shoppinglist,
+                                    headers={"Authorization": self.token})
+
+        shoppinglist = json.dumps({
+            'name': 'London',
+             'desc': 'Visit places'
+         })
+        response = self.client.post('/shoppinglists', data=shoppinglist,
+                                    headers={"Authorization": self.token})
+
+
+        shoppinglist1 = json.dumps({
+            'name': 'Travel',
             'desc': 'Visit places'
         })
-        response = self.client.put('/shoppinglists/1', data=shoppinglist,
+        response = self.client.put('/shoppinglists/2', data=shoppinglist1,
                                    headers={"Authorization": self.token})
-        # print(response.data.decode())
-        # self.assertEqual(response.status_code, 409)
-        # self.assertIn(' name Already exists', response.data.decode())
+       
+        self.assertEqual(response.status_code, 409)
+        self.assertIn('Shoppinglist name Already exists', response.data.decode())
 
     def test_update_shoppinglist_successfully(self):
         """Should return 200 for shoppinglists update succesfully"""
         # First add shoppinglist
         self.test_add_shoppinglist_successfully()
         shoppinglist = json.dumps({
-            'shoppinglist': 'Travel',
+            'name': 'Travel',
             'desc': 'Visit places'
         })
         response = self.client.put('/shoppinglists/1', data=shoppinglist,
                                    headers={"Authorization": self.token})
-        print(response.status_code)
+        
         self.assertEqual(response.status_code, 200)
         self.assertIn('shoppinglist updated', response.data.decode())
 

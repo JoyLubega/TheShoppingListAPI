@@ -1,5 +1,6 @@
 from flask import jsonify,url_for
 from flask import request
+import re
 from models.models import ShoppinglistModel, ItemModel
 
 class ShoppingList(object):
@@ -18,12 +19,28 @@ class ShoppingList(object):
         """
         if not name:
             response = jsonify({'Error': 'Missing name'})
-            response.status_code = 400
+            response.status_code = 404
             return response
 
-        if not name.isalpha():
-            response = jsonify({'Error': 'Names must be in alphabetical strings'})
-            response.status_code = 400
+        if type(name) is int:
+            response = jsonify({'Error': 'Numbers cant be a Name'})
+            response.status_code = 401
+            return response
+
+        if not re.match(r"(^[a-zA-Z_ ]*$)", name):
+            response = jsonify(
+            {'message':
+            'Name should be in alphabetical' }
+            )
+            response.status_code = 401
+            return response
+
+        if re.match(r"(^[ ]*$)", name):
+            response = jsonify(
+            {'message':
+            'A space is not a name' }
+            )
+            response.status_code = 401
             return response
 
         shoppinglist = ShoppinglistModel(name=name, desc=desc, user_id=user_id)
@@ -57,18 +74,19 @@ class ShoppingList(object):
         response = ShoppinglistModel.query.filter_by(user_id=user_id).limit(limit).all()
         if not response:
             response = jsonify([])
-            response.status_code = 200
+            response.status_code = 400
             return response
         else:
             results = []
             
             if search:
                 shopping_lists = ShoppinglistModel.query.filter_by(
-                    user_id=user_id).filter(ShoppinglistModel.name.like('%{0}%'.format(search)))
+                    user_id=user_id).filter(ShoppinglistModel.name.ilike('%{0}%'.format(search)))
             else:
                 shopping_lists = ShoppinglistModel.query.filter_by(user_id=user_id)
             
             if shopping_lists:
+
                 pagination = shopping_lists.paginate(page, per_page=limit, error_out=False)
                 shop_lists = pagination.items
                 if pagination.has_prev:
@@ -98,64 +116,70 @@ class ShoppingList(object):
                 else:
                     return {'message':'No shopping lists to display'}, 404      
 
-
-        # response = ShoppinglistModel.query.filter_by(user_id=user_id).limit(limit).all()
-        # if not response:
-        #     response = jsonify([])
-        #     response.status_code = 200
-        #     return response
-        # else:
-        #     if search:
-        #         res = [shoppinglist for shoppinglist in response if shoppinglist.name
-        #                in search and shoppinglist.user_id == user_id]
-        #         if not res:
-        #             response = jsonify({
-        #                 'error': 'The shoppinglist you searched does not exist'
-        #             })
-        #             return response
-        #         else:
-        #             shoppinglist_data = []
-        #             for data in res:
-        #                 final = {
-        #                     'id': data.id,
-        #                     'name': data.name,
-        #                     'desc': data.desc,
-        #                     'date_added': data.date_added,
-        #                     'user_id': data.user_id
+    @staticmethod
+    def get_all_shoppinglists( user_id,search, limit=None):
+        """
+        Gets all shoppinglists
+        :param user_id: 
+        :param search: 
+        :return: 
+        """
+        response = ShoppinglistModel.query.filter_by(user_id=user_id).limit(limit).all()
+        if not response:
+            response = jsonify([])
+            response.status_code = 400
+            return response
+        else:
+            if search:
+                res = [shoppinglist for shoppinglist in response if shoppinglist.name
+                       in search and shoppinglist.user_id == user_id]
+                if not res:
+                    response = jsonify({
+                        'error': 'The shoppinglist you searched does not exist'
+                    })
+                    return response
+                else:
+                    shoppinglist_data = []
+                    for data in res:
+                        final = {
+                            'id': data.id,
+                            'name': data.name,
+                            'desc': data.desc,
+                            'date_added': data.date_added,
+                            'user_id': data.user_id
                             
-        #                 }
-        #                 shoppinglist_data.clear()
-        #                 shoppinglist_data.append(final)
-        #             response = jsonify(shoppinglist_data)
-        #             response.status_code = 200
-        #             return response
+                        }
+                        shoppinglist_data.clear()
+                        shoppinglist_data.append(final)
+                    response = jsonify(shoppinglist_data)
+                    response.status_code = 200
+                    return response
 
-        #     else:
-        #         res = [shoppinglist for shoppinglist in
-        #                response if shoppinglist.user_id == user_id]
-        #         shoppinglist_data = []
+            else:
+                res = [shoppinglist for shoppinglist in
+                       response if shoppinglist.user_id == user_id]
+                shoppinglist_data = []
                 
-        #         if not res:
-        #             response = jsonify({
-        #                  'error': 'No shoppinglists have been created'
-        #             })
-        #             response.status_code = 404
-        #             return response
-        #         else:
-        #             for data in res:
-        #                 final = {
-        #                     'id': data.id,
-        #                     'name': data.name,
-        #                     'desc': data.desc,
-        #                     'date_added': data.date_added,
-        #                     'user_id': data.user_id,
+                if not res:
+                    response = jsonify({
+                         'error': 'No shoppinglists have been created'
+                    })
+                    response.status_code = 404
+                    return response
+                else:
+                    for data in res:
+                        final = {
+                            'id': data.id,
+                            'name': data.name,
+                            'desc': data.desc,
+                            'date_added': data.date_added,
+                            'user_id': data.user_id,
                             
-        #                 }
-        #                 shoppinglist_data.append(final)
-        #             response = jsonify(shoppinglist_data)
-        #             response.status_code = 200
-        #             return response
-
+                        }
+                        shoppinglist_data.append(final)
+                    response = jsonify(shoppinglist_data)
+                    response.status_code = 200
+                    return response
 
 
 
@@ -211,20 +235,30 @@ class ShoppingList(object):
             shoppinglist = jsonify({'error': 'the shoppinglist does not exist'})
             shoppinglist.status_code = 400
             return shoppinglist
+
         if shoppinglist.name is shoppinglist_name:
             shoppinglist = jsonify({'error': 'the shoppinglist name is the same'})
             shoppinglist.status_code = 409
             return shoppinglist
+        
         shoppinglist.name = shoppinglist_name
         shoppinglist.desc = desc
-        shoppinglist.update()
 
-        shoppinglist = ShoppinglistModel.query.filter_by(id=shoppinglist_id,
-                                             user_id=user_id).first()
-        response = jsonify({'Success':'shoppinglist updated'
-        })
-        response.status_code = 200
-        return response
+        try:
+            shoppinglist.update()
+
+            shoppinglist = ShoppinglistModel.query.filter_by(id=shoppinglist_id,
+                                                 user_id=user_id).first()
+            response = jsonify({'Success':'shoppinglist updated'
+            })
+            response.status_code = 200
+            return response
+
+        except Exception:
+            response = jsonify({'Error': 'Shoppinglist name Already exists'})
+            response.status_code = 409
+            return response
+
 
     @staticmethod
     def delete_shoppinglist(user_id, shoppinglist_id):

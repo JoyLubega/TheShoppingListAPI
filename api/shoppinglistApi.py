@@ -148,11 +148,12 @@ def add_shoppinglist():
 
         
         if isinstance(user_id, int):
+            
+            name = request.json['name']
 
-
-            name = request.json['shoppinglist']
             shop_name = name.lower()
             desc = request.json['desc']
+            
             shoppinglist = ShoppingList()
             response = shoppinglist.create_shoppinglist(shop_name, desc, user_id)
             return response
@@ -173,7 +174,17 @@ def get_shoppinglists():
             #Pagination arguments: Setting page to 1, then min_per_page to 20 and max_per_page to 100
             
             limit = request.args.get('limit',5)
-            limit = limit if limit <= 20 else 20
+            # if (type(limit) != int):
+            #     response = jsonify({'Error': 'limit not an integer'})
+            #     response.status_code = 404
+            #     return response
+            # else:
+            #     limit = request.args.get('limit',5,int)
+
+
+            
+            
+            #limit = limit if limit <= 20 else 20
             search= request.args.get("q","")
 
             shoppinglist = ShoppingList()
@@ -189,6 +200,30 @@ def get_shoppinglists():
 
     except KeyError:
         return invalid_keys()
+
+
+@app.route('/shoppinglists/', methods=['GET'])
+def get_all_shoppinglists():
+    """Method to handle getting all shoppinglists"""
+    try:
+        user_id = get_token()
+        if isinstance(user_id, int):
+            search = request.args.get("q", "")
+            limit = request.args.get("limit", "")
+            shoppinglist = ShoppingList()
+            if limit:
+                limit = int(limit)
+                response = shoppinglist.get_all_shoppinglists(user_id, search, limit)
+                return response
+            response = shoppinglist.get_all_shoppinglists(user_id, search)
+            return response
+
+        else:
+            return invalid_token()
+
+    except KeyError:
+        return invalid_keys()
+
 
 
 @app.route('/shoppinglists/<int:shoppinglist_id>', methods=['GET'])
@@ -216,7 +251,7 @@ def update_shoppinglist(shoppinglist_id):
     try:
         user_id = get_token()
         if isinstance(user_id, int):
-            shoppinglist_name = put_data['shoppinglist']
+            shoppinglist_name = put_data['name']
             list_name = shoppinglist_name.lower()
             desc = put_data['desc']
             shoppinglist = ShoppingList()
@@ -246,7 +281,7 @@ def delete_shoppinglist(shoppinglist_id):
         return invalid_keys()
 
 
-@app.route('/items/<int:shoppinglist_id>', methods=['GET'])
+@app.route('/shoppinglists/<int:shoppinglist_id>/items', methods=['GET'])
 def get_items(shoppinglist_id):
     """Method to handle getting all items in a shoppinglist"""
     try:
@@ -260,6 +295,7 @@ def get_items(shoppinglist_id):
 
     except KeyError:
         return invalid_keys()
+
 
 
 @app.route('/shoppinglists/<int:shoppinglist_id>/items', methods=['POST'])
@@ -290,10 +326,10 @@ def edit_item(shoppinglist_id, item_id):
         if isinstance(user_id, int):
             new_item_name = request.json['item']
             newitemname = new_item_name.lower()
-            new_item_status = request.json['status']
+            #new_item_status = request.json['status']
             item = Item()
             response = item.edit_item(user_id, shoppinglist_id, item_id,
-                                      new_item_name, new_item_status)
+                                      newitemname)
             return response
         else:
             return invalid_token()
