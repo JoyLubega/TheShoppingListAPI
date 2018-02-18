@@ -28,6 +28,7 @@ app = create_app('ProductionEnv')
 '''
 
 
+
 # 404 error handler
 @app.errorhandler(404)
 def page_not_found(e):
@@ -120,7 +121,7 @@ def auth_success(response):
         response = jsonify(data)
         response.status_code = 201
     return response
- 
+
 
 
 
@@ -145,27 +146,27 @@ def add_shoppinglist():
     """Method to handle creating a shoppinglist"""
     request.get_json(force=True)
     try:
-        
+
         user_id = get_token()
 
-        
+
         if isinstance(user_id, int):
-            
+
             name = request.json['name']
 
             shop_name = name.lower()
             desc = request.json['desc']
-            
+
             shoppinglist = ShoppingList()
             response = shoppinglist.create_shoppinglist(shop_name, desc, user_id)
             return response
-            
+
         return invalid_token()
 
     except KeyError:
         return invalid_keys()
 
-    
+
 
 @app.route('/shoppinglists', methods=['GET'])
 def get_shoppinglists():
@@ -174,17 +175,17 @@ def get_shoppinglists():
         user_id = get_token()
         if isinstance(user_id, int):
             #Pagination arguments: Setting page to 1, then min_per_page to 20 and max_per_page to 100
-            
+
             limit = request.args.get('limit',5,int)
             # if (type(limit) != int):
             #     response = jsonify({'Error': 'limit not an integer'})
             #     response.status_code = 404
             #     return response
-            
 
 
-            
-            
+
+
+
             #limit = limit if limit <= 20 else 20
             search= request.args.get("q","")
 
@@ -415,4 +416,3 @@ def decode_auth_token(token):
         })
         response.status_code = 401
         return response
-    

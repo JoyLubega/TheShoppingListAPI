@@ -24,16 +24,16 @@ class UserModel(db.Model):
 
     @staticmethod
     def check_password(pw_hash, password):
-        """ 
-        Validates password        
-        :param pw_hash: 
-        :param password: 
+        """
+        Validates password
+        :param pw_hash:
+        :param password:
         """
         return check_password_hash(pw_hash, password)
 
     def save(self):
         """
-        Save User to DB        
+        Save User to DB
         """
         db.session.add(self)
         db.session.commit()
@@ -56,7 +56,7 @@ class UserModel(db.Model):
     def __repr__(self) -> str:
         return "<User: {}>".format(self.name)
 
-    
+
 
 
 class ShoppinglistModel(db.Model):
@@ -128,6 +128,7 @@ class ItemModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
+
     @staticmethod
     def get_all():
         """Get all Items"""
@@ -140,3 +141,6 @@ class ItemModel(db.Model):
 
     def __repr__(self) -> str:
         return "<Item: {}>".format(self.name)
+
+# db.create_all()
+# db.session.commit()
