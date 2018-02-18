@@ -23,12 +23,14 @@ class TestingEnvironment(MainConfiguration):
 class DevelopmentEnvironment(MainConfiguration):
     DEBUG = True
     TESTING = True
-    
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+
 
 
 class ProductionEnvironment(MainConfiguration):
     DEBUG = True
     TESTING = False
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
 
 # Dictionary of different configuration environments
