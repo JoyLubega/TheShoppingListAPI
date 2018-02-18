@@ -1,2 +1,2 @@
-web: gunicorn  --workers=1 manage:app
+web: gunicorn run:app
 release: python manage.py db upgrade
