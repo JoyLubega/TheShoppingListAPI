@@ -132,6 +132,11 @@ class Authenticate(object):
         response.status_code = 401
         return response
 
+
+
+
+    
+
     @staticmethod
     def reset_password(email, old_password, new_password):
         """

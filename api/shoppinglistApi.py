@@ -120,6 +120,8 @@ def auth_success(response):
         response = jsonify(data)
         response.status_code = 201
     return response
+ 
+
 
 
 @app.route('/auth/reset-password', methods=['POST'])
@@ -173,13 +175,12 @@ def get_shoppinglists():
         if isinstance(user_id, int):
             #Pagination arguments: Setting page to 1, then min_per_page to 20 and max_per_page to 100
             
-            limit = request.args.get('limit',5)
+            limit = request.args.get('limit',5,int)
             # if (type(limit) != int):
             #     response = jsonify({'Error': 'limit not an integer'})
             #     response.status_code = 404
             #     return response
-            # else:
-            #     limit = request.args.get('limit',5,int)
+            
 
 
             
