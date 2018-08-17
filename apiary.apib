@@ -1,0 +1,321 @@
+FORMAT: 1A
+
+
+# ShoppingListAPI
+
+ShoppingListAPI is a simple API allowing users to create, read, update and delete
+shoppinglists
+
+## Register [/auth/register]
+
+
+### Register a new user [POST]
+
+You may register a new user using this action. It takes a JSON
+object containing a name, email and password
+
++ Request (application/json)
+
+        {
+            "name": "John Doe",
+            "email": "Johndoe@gmail.com",
+            "password": "secret"
+            
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /auth/register
+
+    + Body
+
+            {
+                "Status": "Johndoe@gmail.com Successfully registered",
+                "id": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDIwNzA2MTEsImlhdCI6MTUwMjA2NzAxMSwic3ViIjo0fQ.QwmwUemah0Hl7C5EXBPS36qFlNV5-iN8pJx78jimdrI"
+            }
+            
+## Login [/auth/login]            
+
+### Login a user [POST]
+
+You may login a user using this action. It takes a JSON
+object containing an email and password
+
++ Request (application/json)
+
+        {
+            "email": "Johndoe@gmail.com",
+            "password": "secret"
+            
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /auth/register
+
+    + Body
+
+            {
+                "Status": "Johndoe@gmail.com Login Successful",
+                "id": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDIwNzA2MTEsImlhdCI6MTUwMjA2NzAxMSwic3ViIjo0fQ.QwmwUemah0Hl7C5EXBPS36qFlNV5-iN8pJx78jimdrI"
+            }
+            
+            
+## Logout [/auth/logout]            
+
+### Logout a user [POST]
+
+You may logout a user using this action. It takes a JSON
+object containing an auth token in the header
+
++ Request (application/json)
+
+        
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Authorization: Token
+
+
+## Add Shoppinglists [/shoppinglists]            
+
+### Add a shoppinglist [POST]
+
+You add a shoppinglist using this action. It takes a JSON
+object containing the name of the shoppinglist and description and
+Authorization token in header
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Token
+    + Body
+
+            {
+                "shoppinglist": "Travel",
+                "desc": "Places to visit"
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists
+
+    + Body
+
+            {
+                'Status': 'Successfully Added shoppinglists',
+                'id': 1
+            }
+
+
+### Retrieve shoppinglists [GET]
+
+You can retrieve shoppinglists using this action. 
+Request contains Authorization token in header
+
+    + Headers
+
+            Authorization: Token
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists
+
+    + Body
+
+            [
+                {
+                    "date_added": "Mon, 07 Aug 2017 01:41:34 GMT",
+                    "desc": "places",
+                    "id": 1,
+                    "name": "travel",
+                    "user_id": 5
+                },
+                {
+                    "date_added": "Mon, 07 Aug 2017 01:41:34 GMT",
+                    "desc": "Eat",
+                    "id": 2,
+                    "name": "Food",
+                    "user_id": 5
+                }
+            ]
+
+
+## Access to Shoppinglists [/shoppinglists/id]            
+
+### Retrieve a single shoppinglist [GET]
+
+You retrieve a single shoppinglist using this action. 
+Request contains Authorization token in header
+
+    + Headers
+
+            Authorization: Token
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id
+
+    + Body
+
+            {
+                "date_added": "Mon, 07 Aug 2017 01:41:34 GMT",
+                "desc": "places",
+                "id": 1,
+                "name": "travel",
+                "user_id": 5
+            }
+
+### Update a shoppinglist [PUT]
+
+You update a shoppinglist using this action. 
+Request contains Authorization token in header
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Token
+        
+    + Body
+
+            {
+                "shoppinglist": "Sports",
+                "desc": "Sports to play"
+            }
+
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /buckets/id
+
+    + Body
+
+            {
+                'success': 'The shoppinglist has been updated',
+                'shoppinglist': 'Sports'
+            }
+
+### Delete a shoppinglist [DELETE]
+
+You delete a shoppinglist using this action. 
+Request contains Authorization token in header
+
+
+    + Headers
+
+            Authorization: Token
+        
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id
+
+    + Body
+
+            {
+                'success': 'The shoppinglist has been deleted'
+            }
+
+## Add Items [/shoppinglists/id/items]            
+
+### Add an item [POST]
+
+You add an item using this action. It takes a JSON
+object containing an item name
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Token
+    + Body
+
+            {
+                "item": "Birthday cake"
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id/items
+
+    + Body
+
+            {
+                'Status': 'The item has been added successfully',
+                'id': 1
+            }
+
+## Items [/shoppinglists/id/items/item_id]            
+
+### edit an item [PUT]
+
+You edit an item using this action. It takes a JSON
+object containing an item name
+
++ Request (application/json)
+
+
+    + Headers
+
+            Authorization: Token
+    + Body
+
+            {
+                "item": "Jerry's shoes"
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id/items/item_id
+
+    + Body
+
+            {
+                'Status': 'The item has been successfully edited',
+                'item_name': "Go to Silicon Valley"
+            }
+
+### Delete an item [DELETE]
+
+You can delete an item using this action. It takes a JSON
+object containing an item name
+
+
+    + Headers
+
+            Authorization: Token
+
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id/items/item_id
+
+    + Body
+
+            {
+                'success': 'The Item has been deleted'
+            }

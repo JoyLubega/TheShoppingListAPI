@@ -1,3 +1,7 @@
 [report]
 omit =
     */site-packages/*
+    */venv/*
+    */migrations/*
+    */decimal.py
+    

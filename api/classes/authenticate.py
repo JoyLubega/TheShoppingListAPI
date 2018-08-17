@@ -1,6 +1,8 @@
+import re
 from flask import jsonify
 from validate_email import validate_email
 from models.models import UserModel
+
 
 
 class Authenticate(object):
@@ -21,20 +23,61 @@ class Authenticate(object):
         """
         if not name or not email or not password:
             response = jsonify({'Error': 'Missing Values'})
-            response.status_code = 200
+            response.status_code = 404
             return response
 
-        if not validate_email(email):
-            response = jsonify({'Error': 'Invalid Email'})
-            response.status_code = 200
+        if type(name) is int:
+            response = jsonify({'Error': 'Numbers cant be a Name'})
+            response.status_code = 400
             return response
 
+        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
+            response = jsonify(
+            {'message':
+            'Invalid email! A valid email should in this format me.name@gmail.com or joyce.namuli@andela.com' }
+            )
+            response.status_code = 401
+            return response
+
+
+        if re.match(r"(^[ ]*$)", name):
+            response = jsonify(
+            {'message':
+            'A space is not a name' }
+            )
+            response.status_code = 401
+            return response
+
+
+        # if re.match(r"(^[ a-zA-Z_]*$)", name):
+        #     response = jsonify(
+        #     {'message':
+        #     'Name dont start with spaces' }
+        #     )
+        #     response.status_code = 401
+        #     return response
+
+        if not re.match(r"(^[a-zA-Z_ ]*$)", name):
+            response = jsonify(
+            {'message':
+            'Name should be in alphabetical' }
+            )
+            response.status_code = 401
+            return response
+
+        
         if len(password) < 6:
             response = jsonify({'Error': 'Password is short'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
+        # if not name.isalpha():
+        #     response = jsonify({'Error': 'Names must be in alphabetical strings'})
+        #     response.status_code = 400
+        #     return response
+
         user = UserModel(email=email, password=password, name=name)
+
 
         if user.query.filter_by(email=email).first():
             response = jsonify({'Error': 'Email Already exists'})
@@ -61,12 +104,15 @@ class Authenticate(object):
         """
         if not email or not password:
             response = jsonify({'Error': 'Missing login credentials'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
-        if not validate_email(email):
-            response = jsonify({'Error': 'Enter valid email'})
-            response.status_code = 200
+        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
+            response = jsonify(
+            {'message':
+            'Invalid email! A valid email should in this format me.name@gmail.com or joyce.namuli@andela.com' }
+            )
+            response.status_code = 401
             return response
 
         user = UserModel(email=email, password=password)
@@ -86,6 +132,11 @@ class Authenticate(object):
         response.status_code = 401
         return response
 
+
+
+
+    
+
     @staticmethod
     def reset_password(email, old_password, new_password):
         """
@@ -100,7 +151,7 @@ class Authenticate(object):
         """
         if not email or not old_password or not new_password:
             response = jsonify({'Error': 'Missing email or password'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         user = UserModel.query.filter_by(email=email).first()
@@ -110,7 +161,7 @@ class Authenticate(object):
 
         if not user or not user.check_password(user.password, old_password):
             response = jsonify({'Error': 'Email and password does not exist'})
-            response.status_code = 200
+            response.status_code = 400
             return response
 
         user.password = new_password

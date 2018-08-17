@@ -1,9 +1,6 @@
 language: python
 #version
 python:
-  - "3.3"
-  - "3.4"
-  - "3.5"
   - "3.6"
 cache: pip
 services:
@@ -15,7 +12,7 @@ install:
   - pip install coveralls
   - pip install coverage
 script:
-  - nosetests --with-coverage
+  - nosetests --with-coverage --cover-package=api
 
 after_success:
   - coveralls

@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, \
     check_password_hash
 from sqlalchemy import UniqueConstraint
 
+
 class UserModel(db.Model):
     """
     User Database model
@@ -13,7 +14,8 @@ class UserModel(db.Model):
     name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(200))
-    # shoppinglists = db.relationship('shoppinglistModel', backref='user', lazy='dynamic', cascade='delete')
+    shoppinglists = db.relationship(
+        'ShoppinglistModel', backref='user', lazy='dynamic', cascade='delete')
 
     def __init__(self, email, password, name=None):
         self.email = email
@@ -22,16 +24,16 @@ class UserModel(db.Model):
 
     @staticmethod
     def check_password(pw_hash, password):
-        """ 
-        Validates password        
-        :param pw_hash: 
-        :param password: 
+        """
+        Validates password
+        :param pw_hash:
+        :param password:
         """
         return check_password_hash(pw_hash, password)
 
     def save(self):
         """
-        Save User to DB        
+        Save User to DB
         """
         db.session.add(self)
         db.session.commit()
@@ -55,9 +57,11 @@ class UserModel(db.Model):
         return "<User: {}>".format(self.name)
 
 
+
+
 class ShoppinglistModel(db.Model):
     """
-    Shoppinglist database Modae
+    Shoppinglist database Model
     """
     __tablename__ = 'shoppinglists'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -65,8 +69,8 @@ class ShoppinglistModel(db.Model):
     desc = db.Column(db.String(100))
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    __table_args__ = (db.UniqueConstraint('user_id', 'name', name='unq_b_name'),)
-    
+    __table_args__ = (db.UniqueConstraint(
+        'user_id', 'name', name='unq_b_name'),)
 
     def __init__(self, name, desc, user_id):
         self.name = name
@@ -84,6 +88,7 @@ class ShoppinglistModel(db.Model):
     def update():
         """Updates shoppinglist"""
         db.session.commit()
+
 
     @staticmethod
     def get_all():
@@ -109,10 +114,10 @@ class ItemModel(db.Model):
     status = db.Column(db.String(5), default=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow())
     shoppinglist_id = db.Column(db.Integer, db.ForeignKey('shoppinglists.id'))
-    __table_args__ = (db.UniqueConstraint('shoppinglist_id', 'name', name='unq_i_name'),)
+    __table_args__ = (db.UniqueConstraint(
+        'shoppinglist_id', 'name', name='unq_i_name'),)
 
-
-    def __init__(self, name,shoppinglist_id):
+    def __init__(self, name, shoppinglist_id):
         self.name = name
         self.shoppinglist_id = shoppinglist_id
 
@@ -122,6 +127,7 @@ class ItemModel(db.Model):
         """
         db.session.add(self)
         db.session.commit()
+
 
     @staticmethod
     def get_all():
@@ -135,3 +141,6 @@ class ItemModel(db.Model):
 
     def __repr__(self) -> str:
         return "<Item: {}>".format(self.name)
+
+# db.create_all()
+# db.session.commit()
